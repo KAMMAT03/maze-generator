@@ -1,12 +1,22 @@
 import java.awt.*;
 import javax.swing.*;
+import java.util.Scanner;
+
 
 
 public class Maze extends JPanel implements Runnable {
 
     public static void main(String[] args) {
+        System.out.println("Select size of the maze: 1 - small 2 - medium, 3 - big");
+        Scanner sc = new Scanner(System.in);
+        int initialSize = -1;
+        while(initialSize != 1 && initialSize != 2 && initialSize != 3)
+            initialSize = sc.nextInt();
+
+
+
         JFrame window = new JFrame("Maze Generator");
-        window.setContentPane(new Maze());
+        window.setContentPane(new Maze(initialSize));
         window.pack();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setVisible(true);
@@ -21,19 +31,20 @@ public class Maze extends JPanel implements Runnable {
 
     Color[] color;
     /*
-    Można wykorzystać wartości rows i columns do modyfikowania wielkości labiryntu. Na miejscu jedności musi być 1,
-    aby nie przekroczyć indeksu.
+    Można wykorzystać wartości rows i columns do modyfikowania wielkości labiryntu. Wartości rows i columns muszą być.
+    nieparzyste!!!
      */
-    int rows = 21;
-    int columns = 31;
-    int buildSpeed = 10000;
+    int rows = 27;
+    int columns = 33;
+    int buildSpeed = 100;
     int blockSize = 24;
-
     int width = -1;
     int height = -1;
     boolean mazeExists = false;
 
-    public Maze() {
+    public Maze(int size) {
+
+        setSize(size);
         color = new Color[]{
                 Color.BLACK,
                 Color.WHITE,
@@ -42,6 +53,7 @@ public class Maze extends JPanel implements Runnable {
         };
         setPreferredSize(new Dimension(blockSize * columns, blockSize * rows));
         new Thread(this).start();
+
     }
 
     void checkSize() {
@@ -54,6 +66,7 @@ public class Maze extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         checkSize();
+        makeMaze();
         redrawMaze(g);
     }
 
@@ -110,27 +123,14 @@ public class Maze extends JPanel implements Runnable {
         if (maze == null)
             maze = new int[rows][columns];
         int i, j;
-        int emptyCount = 0;
-        int wallCount = 0;
-        int[] wallrow = new int[(rows * columns) / 2];
-        int[] wallcol = new int[(rows * columns) / 2];
+        int roomCount = 0;
         for (i = 0; i < rows; i++)
             for (j = 0; j < columns; j++)
                 maze[i][j] = wallColor;
         for (i = 1; i < rows - 1; i += 2)
             for (j = 1; j < columns - 1; j += 2) {
-                emptyCount++;
-                maze[i][j] = -emptyCount;
-                if (i < rows - 2) {
-                    wallrow[wallCount] = i + 1;
-                    wallcol[wallCount] = j;
-                    wallCount++;
-                }
-                if (j < columns - 2) {
-                    wallrow[wallCount] = i;
-                    wallcol[wallCount] = j + 1;
-                    wallCount++;
-                }
+                roomCount++;
+                maze[i][j] = -roomCount;
             }
         mazeExists = true;
         paintNet();
@@ -143,6 +143,29 @@ public class Maze extends JPanel implements Runnable {
         } catch (InterruptedException e) {
         }
     }
+    public void setSize(int size) {
+        switch (size) {
+            case 1:
+                setColumns(21);
+                setRows(21);
+                break;
+            case 2:
+                setColumns(31);
+                setRows(31);
+                break;
+            case 3:
+                setColumns(41);
+                setRows(41);
+                break;
+        }
+    }
 
+    public void setColumns(int size) {
+        this.columns = size;
+    }
+
+    public void setRows(int size) {
+        this.rows = size;
+    }
 
 }
