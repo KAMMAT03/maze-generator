@@ -142,7 +142,7 @@ public class MazeGraphics extends JPanel implements Runnable {
     public void run(){
         try {
             Thread.sleep(1000);
-        } // wait a bit before starting
+        }
         catch (InterruptedException e) {
         }
     }

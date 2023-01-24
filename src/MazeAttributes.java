@@ -3,8 +3,8 @@ import java.awt.*;
 
 abstract class MazeAttributes extends JPanel {
     public int[][] maze;
-    public int rows = 21;
-    public int columns = 31;
+    public int rows;
+    public int columns;
     public int cellSize = 24;
     final static int wallColor = 0;
     final static int roomColor = 1;
